@@ -1,6 +1,7 @@
 module Tests
 
 open System
+open FSharp.Data.UnitSystems.SI.UnitSymbols
 open FsUnit.Xunit
 open Xunit
 
@@ -76,10 +77,94 @@ let ``Exercise 1.4`` () =
     x |> should (equalWithin tolerance) x'
     y |> should (equalWithin tolerance) y'
     
-[<Fact>]
 let ``Exercise 1.5`` () =
     ()
 
-[<Fact>]
 let ``Exercise 1.6`` () =
+    ()
+
+[<Fact>]
+let ``Exercise 2.1`` () =
+    let tolerance = 1e-3
+    let f x = sqrt <| 1.0 + x     
+    f 0.0 |> should equal 1.0
+    f 1.0 |> should (equalWithin tolerance) 1.414
+    f 3.0 |> should equal 2.0 
+
+let ``Exercise 2.2`` () =
+    let yRock30 (t: float<s>) =
+        t * 30.0<m/s>
+    ()
+    
+let ``Exercise 2.3`` () =
+    let vRock30 (t: float<s>) =
+        let g = 9.8067<m/s^2>
+        30.0<m/s> - t * g
+    ()
+    
+[<Fact>]
+let ``Exercise 2.4`` () =
+    let sinDeg x = sin <| (x / 180.0) * Math.PI
+    (sinDeg 30.0) |> should equal (sin <| Math.PI / 6.0)
+    
+let ``Exercise 2.5`` () =
+    ()
+    
+let ``Exercise 2.6`` () =
+    ()
+    
+let ``Exercise 3.1`` () =
+    ()
+    
+[<Fact>]
+let ``Exercise 3.2`` () =
+    let f x = if x <= 0.0 then 0.0 else x
+    let E r = if r <= 1.0 then r else (1.0 / (r**2))
+    ()
+    
+[<Fact>]
+let ``Exercise 3.3`` () =
+    let isXorY c =
+        match c with
+        | 'X' -> true
+        | 'Y' -> true
+        | _ -> false
+    (isXorY 'X') |> should equal true
+    (isXorY 'Y') |> should equal true
+    (isXorY 'Z') |> should equal false
+    
+[<Fact>]
+let ``Exercise 3.4`` () =
+    let bagFee check = if check then 100 else 0
+    let bagFee2 = function
+        | true -> 100
+        | false -> 0
+    (bagFee true) |> should equal 100
+    (bagFee false) |> should equal 0
+    (bagFee true) |> should equal (bagFee2 true)
+    (bagFee false) |> should equal (bagFee2 false)
+
+[<Fact>]
+let ``Exercise 3.5`` () =
+    let greaterThan50 x = x > 50
+    (greaterThan50 50) |> should equal false
+    (greaterThan50 51) |> should equal true
+    
+[<Fact>]
+let ``Exercise 3.6`` () =
+    let amazingCurve x = min (x * 2) 100
+    (amazingCurve 50) |> should equal 100
+    (amazingCurve 51) |> should equal 100
+    (amazingCurve 49) |> should equal 98
+    
+let ``Exercise 3.7`` () =
+    ()
+
+let ``Exercise 3.8`` () =
+    ()
+
+let ``Exercise 3.9`` () =
+    ()
+    
+let ``Exercise 3.10`` () =
     ()
