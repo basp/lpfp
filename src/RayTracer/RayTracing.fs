@@ -71,6 +71,13 @@ type Instance = {
     Transform: Transform option
 }
 
+type Intersection = {
+    T: float32
+    Point: Vector3
+    Normal: Vector3
+    // material    
+}
+
 let initTransform m =
     match Matrix4x4.Invert(m) with
     | true, inv -> Some { Matrix = m; Inverse = inv }
@@ -102,19 +109,22 @@ let initViewport (canvas: Canvas) (viewportHeight: float32<world>) =
 let initCamera (settings: CameraSettings) =
     // The canvas represents the film of the camera in pixel units.
     let canvas = initCanvas settings.AspectRatio settings.CanvasHeight
-    // The viewport represents the dimensions of the lens in world units.
+    // The viewport represents the dimensions of the camera view in world units.
     let viewport = initViewport canvas settings.ViewportHeight
     // Viewport U and V are vectors representing the horizontal and vertical
-    // dimensions of the canvas in world space.
+    // dimensions of the canvas in world space. These are used to calculate the
+    // pixel stride vectors DU and DV.
     let viewportU = Vector3(float32 viewport.Width, 0f, 0f)
     let viewportV = Vector3(0f, float32 -viewport.Height, 0f)
     // Pixel DU and DV represent respectively the horizontal and vertical
     // stride (in world space) between pixel centers. 
     let pixelDU = viewportU / (float32 canvas.Width)
     let pixelDV = viewportV / (float32 canvas.Height)
-    // For now the camera is positioned at the origin.
+    // We will set the camera at the origin for now.
     let cameraPosition = Vector3.Zero
     // The world space coordinates of the upper left corner of the viewport.
+    // We will use this as an offset point to calculate the pixel (0, 0)
+    // coordinate in world space.
     let viewportUpperLeft =
         cameraPosition +
         Vector3(0f, 0f, float32 settings.FocusDistance) -
@@ -123,6 +133,7 @@ let initCamera (settings: CameraSettings) =
     // The center of the pixel (in world coordinates) of the pixel at canvas
     // coordinates (0, 0).
     let pixel00 = viewportUpperLeft + 0.5f * (pixelDU + pixelDV)
+    // With everything calculated we are finally able to return a camera record.    
     { Camera.AspectRatio = settings.AspectRatio
       Canvas = canvas
       Viewport = viewport
@@ -161,6 +172,23 @@ let backgroundColor ray =
 let normalizeColor (v: Vector3) =
     Vector4(v, 1f)
     |> Color.FromNormalized 
+
+let intersectSphere center radius ray =
+    let solve a b c =
+        let D = b * b - 4f * a * c
+        [(+); (-)]
+        |> List.map (fun f -> (f -b (sqrt D)) / 2f / a)
+    let oc = center - ray.Origin
+    let a = Vector3.Dot(ray.Direction, ray.Direction)
+    let b = -2f * Vector3.Dot(ray.Direction, oc)
+    let c = Vector3.Dot(oc, oc) - radius * radius
+    solve a b c |> List.sort   
+
+let intersect (instance: Instance) ray =
+    // Quadratic solver by [Dmitry Soshnikov](https://www.fssnip.net/38/title/Wicked-way-to-solve-quadratic-equation-using-list-of-operators).
+    match instance.Object with
+    | Sphere(center, radius) ->
+        ray |> intersectSphere center radius
     
 /// Basic camera usage example.
 let example1 () =
@@ -185,23 +213,6 @@ let example1 () =
                 |> normalizeColor
             image.DrawPixel(i, j, color)    
     image
-
-let intersectSphere center radius ray =
-    let solve a b c =
-        let D = b * b - 4f * a * c
-        [(+); (-)]
-        |> List.map (fun f -> (f -b (sqrt D)) / 2f / a)
-    let oc = center - ray.Origin
-    let a = Vector3.Dot(ray.Direction, ray.Direction)
-    let b = -2f * Vector3.Dot(ray.Direction, oc)
-    let c = Vector3.Dot(oc, oc) - radius * radius
-    solve a b c |> List.sort   
-
-let intersect (instance: Instance) ray =
-    // Quadratic solver by [Dmitry Soshnikov](https://www.fssnip.net/38/title/Wicked-way-to-solve-quadratic-equation-using-list-of-operators).
-    match instance.Object with
-    | Sphere(center, radius) ->
-        ray |> intersectSphere center radius
 
 let example2 () =
     let camera =
