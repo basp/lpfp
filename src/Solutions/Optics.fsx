@@ -1,5 +1,9 @@
-﻿open System.Numerics
-open FSharp.Data.UnitSystems.SI.UnitSymbols
+﻿#r "nuget: Raylib-CSharp"
+
+open System.Numerics
+open Raylib_CSharp
+open Raylib_CSharp.Colors
+open Raylib_CSharp.Images
 
 type Canvas = {
     Width: int
@@ -75,14 +79,6 @@ let initCamera (settings: CameraSettings) =
       PixelDV = pixelDV
       Pixel00 = pixel00 }
 
-let camera =
-    let settings =
-      { CameraSettings.AspectRatio = 16f / 9f
-        CanvasHeight = 1080
-        ViewportHeight = 2f
-        FocusDistance = 1f }
-    initCamera settings
-
 let generateRay (x: int) (y: int) camera =
     let pixelCenter =
         camera.Pixel00 +
@@ -91,3 +87,43 @@ let generateRay (x: int) (y: int) camera =
     let rayDirection = pixelCenter - camera.Position
     { Origin = camera.Position
       Direction = rayDirection }
+    
+let rays camera =
+    seq {
+        for j in [0..(camera.Canvas.Height - 1)] do
+            for i in [0..(camera.Canvas.Width - 1)] do
+                generateRay i j camera                
+    }
+    
+let rayColor ray =
+    let unitDirection = Vector3.Normalize(ray.Direction)
+    let a = 0.5f * (unitDirection.Y + 1f)
+    (1f - a) * Vector3.One + a * Vector3(0.5f, 0.7f, 1f)
+    
+let normalizeColor (v: Vector3) =
+    Vector4(v, 1f) |> Color.FromNormalized 
+    
+let example () =
+    let camera =
+        let settings =
+          { CameraSettings.AspectRatio = 16f / 9f
+            CanvasHeight = 200
+            ViewportHeight = 2f
+            FocusDistance = 1f }
+        initCamera settings
+    let image =
+        let w = camera.Canvas.Width
+        let h = camera.Canvas.Height
+        Image.GenColor(w, h, Color.Black)
+    for j in [0..(camera.Canvas.Height - 1)] do
+        for i in [0..(camera.Canvas.Width - 1)] do
+            let color =
+                camera
+                |> generateRay i j
+                |> rayColor
+                |> normalizeColor
+            image.DrawPixel(i, j, color)    
+    image
+    
+example ()
+|> _.Export(@"d:\temp\test.png")
