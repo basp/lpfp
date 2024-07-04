@@ -11,14 +11,15 @@
   <ItemGroup>
     <Compile Include="Seq.fs" />
     <Compile Include="Tests.fs" />
+    <Compile Include="Raytracing.fs" />
     <Compile Include="Program.fs" />
     <None Include="Sandbox.fsx" />
-    <Content Include="README.md" />
     <None Include="Optics.fsx" />
-    <Compile Include="Raytracing.fs" />
+    <Content Include="README.md" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FsUnit.xUnit" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />

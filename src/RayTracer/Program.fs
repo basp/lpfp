@@ -1,4 +1,4 @@
-open System
+﻿open System
 open System.Security.Cryptography
 open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Running
@@ -19,7 +19,12 @@ type Md5VsSha256 () =
     [<Benchmark>]
     member _.Md5() = md5.ComputeHash(data)
 
+type RayTracing () =
+    [<Benchmark>]
+    member _.RayColors() =
+        RayTracing.example ()
+    
 module Program =
     let [<EntryPoint>] main _ =
-        let _ = BenchmarkRunner.Run<Md5VsSha256>()
-        0
+        let _ = BenchmarkRunner.Run<RayTracing>()
+        0    

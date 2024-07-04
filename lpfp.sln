@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{287FCFDD-6E8
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Solutions", "src\Solutions\Solutions.fsproj", "{EC941FB3-2179-4197-8744-9EFFBFD0E880}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RayTracer", "src\RayTracer\RayTracer.fsproj", "{FAC25871-4463-4F69-BA15-6245EC98CBFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{EC941FB3-2179-4197-8744-9EFFBFD0E880}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC941FB3-2179-4197-8744-9EFFBFD0E880}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC941FB3-2179-4197-8744-9EFFBFD0E880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAC25871-4463-4F69-BA15-6245EC98CBFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC25871-4463-4F69-BA15-6245EC98CBFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC25871-4463-4F69-BA15-6245EC98CBFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC25871-4463-4F69-BA15-6245EC98CBFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EC941FB3-2179-4197-8744-9EFFBFD0E880} = {287FCFDD-6E8E-4E42-ABE8-BC9A2F6531A2}
+		{FAC25871-4463-4F69-BA15-6245EC98CBFB} = {287FCFDD-6E8E-4E42-ABE8-BC9A2F6531A2}
 	EndGlobalSection
 EndGlobal
