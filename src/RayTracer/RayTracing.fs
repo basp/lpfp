@@ -145,8 +145,8 @@ let initCamera (settings: CameraSettings) =
     // We will set the camera at the origin for now.
     let cameraPosition = Vector3.Zero
     // The world space coordinates of the upper left corner of the viewport.
-    // We will use this as an offset point to calculate the pixel (0, 0)
-    // coordinate in world space.
+    // We will use this as an offset point to calculate the center of the
+    // pixel (0, 0) coordinate in world space.
     let viewportUpperLeft =
         cameraPosition +
         Vector3(0f, 0f, float32 settings.FocusDistance) -
