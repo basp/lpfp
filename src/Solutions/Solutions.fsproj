@@ -16,6 +16,7 @@
     <None Include="Sandbox.fsx" />
     <None Include="Optics.fsx" />
     <Content Include="README.md" />
+    <None Include="RandomProgramming.fsx" />
   </ItemGroup>
 
   <ItemGroup>

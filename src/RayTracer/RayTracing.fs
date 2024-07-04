@@ -9,7 +9,8 @@ open Raylib_CSharp.Images
 [<Measure>] type world
 
 /// The canvas represents a 2D medium of cells into which values can be set.
-/// For a rendering, this will usually be the dimensions of a bitmap.
+/// For a rendering, this will usually be the dimensions of a bitmap (i.e. an
+/// 2D array of Vector3 values).
 type Canvas = {
     /// The width of the canvas (in pixels).
     Width: int<px>
@@ -127,23 +128,30 @@ let initViewport (canvas: Canvas) (viewportHeight: float32<world>) =
     { Viewport.Width = viewportWidth
       Height = viewportHeight }
     
-/// Initializes a new camera based on given camera settings.
+/// Initializes a new camera based on given camera settings. This sets up a
+/// camera that uses a left-handed coordinate system.
 let initCamera (settings: CameraSettings) =
     // The canvas represents the film of the camera in pixel units.
     let canvas = initCanvas settings.AspectRatio settings.CanvasHeight
+    
     // The viewport represents the dimensions of the camera view in world units.
     let viewport = initViewport canvas settings.ViewportHeight
+    
     // Viewport U and V are vectors representing the horizontal and vertical
     // dimensions of the canvas in world space. These are used to calculate the
-    // pixel stride vectors DU and DV.
+    // pixel stride vectors DU and DV. Note that the Y coordinate is negated
+    // here since we want the stride to go down but the y-axis to point up.
     let viewportU = Vector3(float32 viewport.Width, 0f, 0f)
     let viewportV = Vector3(0f, float32 -viewport.Height, 0f)
+    
     // Pixel DU and DV represent respectively the horizontal and vertical
     // stride (in world space) between pixel centers. 
     let pixelDU = viewportU / (float32 canvas.Width)
     let pixelDV = viewportV / (float32 canvas.Height)
+    
     // We will set the camera at the origin for now.
     let cameraPosition = Vector3.Zero
+    
     // The world space coordinates of the upper left corner of the viewport.
     // We will use this as an offset point to calculate the center of the
     // pixel (0, 0) coordinate in world space.
@@ -152,9 +160,11 @@ let initCamera (settings: CameraSettings) =
         Vector3(0f, 0f, float32 settings.FocusDistance) -
         viewportU / 2f -
         viewportV / 2f
+        
     // The center of the pixel (in world coordinates) of the pixel at canvas
     // coordinates (0, 0).
     let pixel00 = viewportUpperLeft + 0.5f * (pixelDU + pixelDV)
+    
     // With everything calculated we are finally able to return a camera record.    
     { Camera.AspectRatio = settings.AspectRatio
       Canvas = canvas
@@ -240,6 +250,7 @@ let example1 () =
             image.DrawPixel(i, j, color)    
     image
 
+/// Just a bit more terse way to setup a camera.
 let example2 () =
     let camera =
         { CameraSettings.AspectRatio = 16f / 9f
@@ -249,6 +260,7 @@ let example2 () =
         |> initCamera
     camera
     
+/// Test intersecting an actual sphere with a ray.
 let example3 () =
     let obj =
         { Object = Sphere(Vector3.Zero, 1f)
@@ -257,4 +269,4 @@ let example3 () =
         { Origin = Vector3(0f, 0f, -5f)
           Direction = Vector3(0f, 0f, 1f) }
     let intersectSphere = intersect obj
-    printfn $"%A{intersectSphere ray}"
+    intersectSphere ray
