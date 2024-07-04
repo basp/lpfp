@@ -191,8 +191,11 @@ let generateRay (x: int<px>) (y: int<px>) camera =
 /// Generates a sequence of rays for every pixel on the camera.
 let rays camera =
     seq {
+        // Yet need to find out how to "properly" iterate over units.
+        // For now we'll just strip them.
         for j in [0..(int camera.Canvas.Height - 1)] do
             for i in [0..(int camera.Canvas.Width - 1)] do
+                // We need to re-apply them in order to generate a ray.
                 let x = i * 1<px>
                 let y = j * 1<px>
                 camera |> generateRay x y                
