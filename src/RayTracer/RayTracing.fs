@@ -82,7 +82,7 @@ type Instance = {
 }
 
 type Intersection = {
-    // The t value of the intersection. This is the point t along the ray
+    // The t value of the intersection. This is the distance t along the ray
     // where the intersection was found.
     T: float32
     // The point (in world space) where the intersection occurred.
