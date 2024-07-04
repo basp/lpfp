@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Seq.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
     <None Include="Sandbox.fsx" />
+    <Content Include="README.md" />
+    <None Include="Optics.fsx" />
+    <Compile Include="Raytracing.fs" />
   </ItemGroup>
 
   <ItemGroup>

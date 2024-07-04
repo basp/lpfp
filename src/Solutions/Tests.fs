@@ -187,3 +187,24 @@ let ``Exercise 4.4`` () =
 let ``Exercise 4.5`` () =
     ()
     
+module SequenceTests =
+    [<Fact>]
+    let ``test iterate`` () =
+        Seq.iterate (fun x -> 2 * x) 1
+        |> Seq.take 5
+        |> Seq.toList
+        |> should equal [1; 2; 4; 8; 16]
+
+    [<Fact>]
+    let ``test cycle`` () =
+        Seq.cycle [1; 2; 3]
+        |> Seq.take 5
+        |> Seq.toList
+        |> should equal [1; 2; 3; 1; 2]
+
+    [<Fact>]
+    let ``repeat`` () =
+        Seq.repeat 3
+        |> Seq.take 4
+        |> Seq.toList
+        |> should equal [3; 3; 3; 3] 
