@@ -22,9 +22,10 @@ type Md5VsSha256 () =
 type RayTracing () =
     [<Benchmark>]
     member _.RayColors() =
-        RayTracing.example ()
+        RayTracing.example1 ()
     
 module Program =
     let [<EntryPoint>] main _ =
-        let _ = BenchmarkRunner.Run<RayTracing>()
+        // let _ = BenchmarkRunner.Run<RayTracing>()
+        printfn $"%A{RayTracing.example2 ()}"
         0    
