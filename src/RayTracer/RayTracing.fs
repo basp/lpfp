@@ -8,6 +8,8 @@ open Raylib_CSharp.Images
 [<Measure>] type px
 [<Measure>] type world
 
+/// The canvas represents a 2D medium of cells into which values can be set.
+/// For a rendering, this will usually be the dimensions of a bitmap.
 type Canvas = {
     /// The width of the canvas (in pixels).
     Width: int<px>
@@ -15,6 +17,8 @@ type Canvas = {
     Height: int<px>
 }
 
+/// The viewport is a rectangle (in world coordinates) onto which camera rays
+/// are projected.
 type Viewport = {
     /// The width of the viewport (in world space).
     Width: float32<world>
@@ -22,6 +26,7 @@ type Viewport = {
     Height: float32<world>
 }
 
+/// These are the minimal settings to initialize a camera.
 type CameraSettings = {
     /// The aspect ratio of the camera.
     AspectRatio: float32
@@ -33,6 +38,7 @@ type CameraSettings = {
     FocusDistance: float32<world>
 }
 
+/// Contains the parameters required to send rays into the world.
 type Camera = {
     /// The aspect ratio of the camera.
     AspectRatio: float32
@@ -61,9 +67,12 @@ type Ray = {
 type Object =
     | Sphere of Vector3 * float32
 
+/// A cached inverse transform. 
 type Transform = {
+    // The original transform matrix.
     Matrix: Matrix4x4
-    Inverse: Matrix4x4
+    // The cached inverse transform matrix.
+    Inverse: Matrix4x4    
 }
 
 type Instance = {
@@ -72,12 +81,17 @@ type Instance = {
 }
 
 type Intersection = {
+    // The t value of the intersection. This is the point t along the ray
+    // where the intersection was found.
     T: float32
+    // The point (in world space) where the intersection occurred.
     Point: Vector3
+    // The normal of the surface at the intersection point.
     Normal: Vector3
-    // material    
+    // TODO: material    
 }
 
+// Returns some cached transform. If the matrix is degenerate it returns none. 
 let initTransform m =
     match Matrix4x4.Invert(m) with
     | true, inv -> Some { Matrix = m; Inverse = inv }
