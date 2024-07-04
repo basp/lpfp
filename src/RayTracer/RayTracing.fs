@@ -38,7 +38,8 @@ type CameraSettings = {
     FocusDistance: float32<world>
 }
 
-/// Contains the parameters required to send rays into the world.
+/// Contains the parameters required to send rays into the world and to
+/// translate between canvas and world space.
 type Camera = {
     /// The aspect ratio of the camera.
     AspectRatio: float32
