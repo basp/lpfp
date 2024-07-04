@@ -145,27 +145,29 @@ let initCamera (settings: CameraSettings) =
     // here since we want the stride to go down but the y-axis to point up.
     let viewportU = Vector3(float32 viewport.Width, 0f, 0f)
     let viewportV = Vector3(0f, float32 -viewport.Height, 0f)
-    
-    // Pixel DU and DV represent respectively the horizontal and vertical
-    // stride (in world space) between pixel centers. 
-    let pixelDU = viewportU / (float32 canvas.Width)
-    let pixelDV = viewportV / (float32 canvas.Height)
+
+    let pixelDU, pixelDV =
+        // Pixel DU and DV represent respectively the horizontal and vertical
+        // stride (in world space) between pixel centers. 
+        let pixelDU = viewportU / (float32 canvas.Width)
+        let pixelDV = viewportV / (float32 canvas.Height)
+        pixelDU, pixelDV
     
     // We will set the camera at the origin for now.
     let cameraPosition = Vector3.Zero
-    
-    // The world space coordinates of the upper left corner of the viewport.
-    // We will use this as an offset point to calculate the center of the
-    // pixel (0, 0) coordinate in world space.
-    let viewportUpperLeft =
-        cameraPosition +
-        Vector3(0f, 0f, float32 settings.FocusDistance) -
-        viewportU / 2f -
-        viewportV / 2f
         
     // The center of the pixel (in world coordinates) of the pixel at canvas
     // coordinates (0, 0).
-    let pixel00 = viewportUpperLeft + 0.5f * (pixelDU + pixelDV)
+    let pixel00 =
+        // The world space coordinates of the upper left corner of the viewport.
+        // We will use this as an offset point to calculate the center of the
+        // pixel (0, 0) coordinate in world space.
+        let viewportUpperLeft =
+            cameraPosition +
+            Vector3(0f, 0f, float32 settings.FocusDistance) -
+            viewportU / 2f -
+            viewportV / 2f        
+        viewportUpperLeft + 0.5f * (pixelDU + pixelDV)
     
     // With everything calculated we are finally able to return a camera record.    
     { Camera.AspectRatio = settings.AspectRatio
