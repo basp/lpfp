@@ -39,7 +39,8 @@ type CameraSettings = {
 }
 
 /// Contains the parameters required to send rays into the world and to
-/// translate between canvas and world space.
+/// translate between canvas and world space. Especially, DU, DV and 00 are
+/// essential in order to iterate over the ray targets (pixels). 
 type Camera = {
     /// The aspect ratio of the camera.
     AspectRatio: float32
@@ -58,6 +59,7 @@ type Camera = {
     Pixel00: Vector3
 }
 
+/// A combination of an origin and a direction in world space.
 type Ray = {
     /// The origin (starting point) of the ray (in world space).
     Origin: Vector3
@@ -76,9 +78,13 @@ type Transform = {
     Inverse: Matrix4x4    
 }
 
+/// Used to decouple objects from material and transformations.
 type Instance = {
     Object: Object
     Transform: Transform option
+    // TODO:
+    // Instances should probably also have a material.
+    // Or we might consider another type such as a primitive.
 }
 
 type Intersection = {
@@ -89,7 +95,8 @@ type Intersection = {
     Point: Vector3
     // The normal of the surface at the intersection point.
     Normal: Vector3
-    // TODO: material    
+    // TODO:
+    // We probably want to store the material ont he intersection.    
 }
 
 // Returns some cached transform. If the matrix is degenerate it returns none. 
@@ -159,10 +166,14 @@ let initCamera (settings: CameraSettings) =
 
 /// Generates a ray for given pixel coordinates and camera.
 let generateRay (x: int<px>) (y: int<px>) camera =
+    // Calculate the center of the pixel specified by x and y in the arguments.
+    // This will result in a pixel coordinate mapped to world space coordinates.
     let pixelCenter =
         camera.Pixel00 +
         (float32 x * camera.PixelDU) +
         (float32 y * camera.PixelDV)
+    // Calculate the direction based on the pixel center (in world space) and
+    // the camera position (in world space).
     let rayDirection = pixelCenter - camera.Position
     { Origin = camera.Position
       Direction = rayDirection }
