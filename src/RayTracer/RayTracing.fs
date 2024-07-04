@@ -206,6 +206,9 @@ let backgroundColor ray =
     
 /// Normalizes a color vector to a Raylib color.
 let normalizeColor (v: Vector3) =
+    // In order to normalize the color for Raylib we need to convert it to a 4D
+    // vector where the w component represents opacity. In this case, we want
+    // full opacity so we just specify one (`1f`).
     Vector4(v, 1f)
     |> Color.FromNormalized 
 
