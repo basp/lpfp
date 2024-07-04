@@ -168,3 +168,22 @@ let ``Exercise 3.9`` () =
     
 let ``Exercise 3.10`` () =
     ()
+    
+let ``Exercise 4.1`` () =
+    ()
+    
+let ``Exercise 4.2`` () =
+    ()
+    
+let ``Exercise 4.3`` () =
+    ()
+    
+let ``Exercise 4.4`` () =
+    // The derivative of `cos` will be sensitive to values of `t` when the
+    // slope is steep (i.e. at 1/2 PI and 3/2 PI). The derivative will be less
+    // sensitive near the extremes of the function (i.e. at PI and 2 PI).
+    ()
+
+let ``Exercise 4.5`` () =
+    ()
+    
