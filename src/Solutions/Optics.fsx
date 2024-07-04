@@ -6,34 +6,51 @@ open Raylib_CSharp.Colors
 open Raylib_CSharp.Images
 
 type Canvas = {
+    /// The width of the canvas (in pixels).
     Width: int
+    /// The height of the canvas (in pixels).
     Height: int
 }
 
 type Viewport = {
+    /// The width of the viewport (in world space).
     Width: float32
+    /// The height of the viewport (in world space).
     Height: float32
 }
 
 type CameraSettings = {
+    /// The aspect ratio of the camera.
     AspectRatio: float32
+    /// The height of the canvas (in pixels).
     CanvasHeight: int
+    /// The height of the viewport (in world space).
     ViewportHeight: float32
+    /// The focus distance (in world space).    
     FocusDistance: float32
 }
 
 type Camera = {
+    /// The aspect ratio of the camera.
     AspectRatio: float32
+    /// The dimensions of the canvas (in pixels).
     Canvas: Canvas
+    /// The dimensions of the viewport (in world space).
     Viewport: Viewport
-    Position: Vector3
+    /// The position of the camera (in world space).
+    Position: Vector3    
+    /// The horizontal stride (in world space) from pixel to pixel.
     PixelDU: Vector3
+    /// The vertical stride (in world space) from pixel to pixel.
     PixelDV: Vector3
+    /// The center of the upper left pixel (in world space).
     Pixel00: Vector3
 }
 
 type Ray = {
+    /// The origin (starting point) of the ray (in world space).
     Origin: Vector3
+    /// The direction of the ray (in world space).
     Direction: Vector3
 }
 
