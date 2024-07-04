@@ -100,7 +100,9 @@ type Intersection = {
     // We probably want to store the material ont he intersection.    
 }
 
-// Returns some cached transform. If the matrix is degenerate it returns none. 
+// Returns some cached transform. If the matrix is degenerate it returns none.
+// Convenience method so we can F# option mapping with transforms without having
+// to check for singular cases every time. 
 let initTransform m =
     match Matrix4x4.Invert(m) with
     | true, inv -> Some { Matrix = m; Inverse = inv }
