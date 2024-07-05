@@ -186,6 +186,7 @@ let generateRay (x: int<px>) (y: int<px>) camera =
         camera.Pixel00 +
         (float32 x * camera.PixelDU) +
         (float32 y * camera.PixelDV)
+        
     // Calculate the direction based on the pixel center (in world space) and
     // the camera position (in world space).
     let rayDirection = pixelCenter - camera.Position
@@ -193,7 +194,7 @@ let generateRay (x: int<px>) (y: int<px>) camera =
       Direction = rayDirection }
     
 /// Generates a sequence of rays for every pixel on the camera.
-let rays camera =
+let rays1 camera =
     seq {
         // Yet need to find out how to "properly" iterate over units.
         // For now we'll just strip them.
@@ -203,6 +204,19 @@ let rays camera =
                 let x = i * 1<px>
                 let y = j * 1<px>
                 camera |> generateRay x y                
+    }
+    
+/// Generates a sequence of rays for every pixel on the camera along with their
+/// canvas pixel coordinates. 
+let rays2 camera =
+    seq {
+        for j in [0..(int camera.Canvas.Height - 1)] do
+            for i in [0..(int camera.Canvas.Width - 1)] do
+                let x = i * 1<px>
+                let y = j * 1<px>
+                let ray = camera |> generateRay x y
+                let pixel = x, y
+                (pixel, ray)
     }
     
 /// Provides a background color for a ray that doesn't intersect anything.
@@ -280,3 +294,11 @@ let example3 () =
           Direction = Vector3(0f, 0f, 1f) }
     let intersectSphere = intersect obj
     intersectSphere ray
+    
+let exampleCamera () =
+    { CameraSettings.AspectRatio = 15f / 9f
+      CanvasHeight = 200<px>
+      FocusDistance = 1f<world>
+      ViewportHeight = 2f<world> }
+    |> initCamera
+    

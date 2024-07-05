@@ -26,6 +26,6 @@ type RayTracing () =
     
 module Program =
     let [<EntryPoint>] main _ =
-        // let _ = BenchmarkRunner.Run<RayTracing>()
-        printfn $"%A{RayTracing.example3 ()}"
+        let cam = RayTracing.exampleCamera ()
+        printfn $"%A{cam}"
         0    
