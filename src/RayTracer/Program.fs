@@ -23,6 +23,8 @@ type RayTracing () =
     [<Benchmark>]
     member _.RayColors() =
         RayTracing.example1 ()
+  
+  
     
 module Program =
     let [<EntryPoint>] main _ =

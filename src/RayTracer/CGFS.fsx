@@ -1,6 +1,7 @@
 ﻿#r "nuget: Raylib-CSharp"
 
 open System.Numerics
+open System.Threading.Tasks
 open Raylib_CSharp.Images
 open Raylib_CSharp.Colors
 
@@ -35,6 +36,7 @@ type Camera = {
     FocalDistance: float32
     PixelDU: float32
     PixelDV: float32
+    Position: Vector3
 }
 
 let initCamera
@@ -48,10 +50,30 @@ let initCamera
       Viewport = viewport
       FocalDistance = focalDistance
       PixelDU = pixelDU
-      PixelDV = pixelDV }
+      PixelDV = pixelDV
+      Position = Vector3.Zero }
     
-let canvasToViewport x y (camera: Camera) =
-    let vx = x * camera.PixelDU
-    let vy = y * camera.PixelDV
-    let vz = camera.FocalDistance
-    Vector3(vx, vy, vz)
+type Ray = {
+    Origin: Vector3
+    Direction: Vector3
+}
+    
+let generateRay x y (camera: Camera) =
+    let canvasToViewport x y (camera: Camera) =
+        let vx = float32 x * camera.PixelDU
+        let vy = float32 y * camera.PixelDV
+        let vz = camera.FocalDistance
+        Vector3(vx, vy, vz)    
+    let target = canvasToViewport x y camera
+    let direction = target - camera.Position
+    { Origin = camera.Position
+      Direction = direction }
+
+let canvas = Canvas(200, 100)
+
+let viewport = { Viewport.Width = 2f; Height = 1f }
+
+let camera = initCamera canvas viewport 1f
+
+camera
+|> generateRay 0 -99

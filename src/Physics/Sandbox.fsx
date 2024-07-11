@@ -1,15 +1,9 @@
 ﻿#load "Seq.fs"
 
-// Derivative
-// (float -> float) -> float -> float
-
 let derivative dt f t =
     let f0 = f (t + dt / 2.0)
     let f1 = f (t - dt / 2.0)
     (f0 - f1) / dt
-
-// Integration
-// (float -> float) -> float -> float -> float
 
 let integral dt f a b =
     let tMin = a + dt / 2.0
@@ -34,6 +28,7 @@ let linspace start stop n =
             current <- current + delta
     }
 
+// Exercise 6.16
 let trapz n (f: float -> float) a b =
     let x = linspace a b (n + 1)
     let y = Seq.map f x |> Seq.toList
@@ -43,4 +38,15 @@ let trapz n (f: float -> float) a b =
     List.concat [left; right]
     |> List.sum
     |> fun t -> t * (dx / 2.0)
+       
+let oneStep (dt: float) f (t, y) =
+    let t' = t + dt
+    let y' = y + f t * dt
+    (t', y')
     
+let integral' dt f a b =
+    Seq.iterate (oneStep dt f) (a + dt / 2.0, 0.0)
+    |> Seq.skipWhile (fun (t, _) -> t < b)
+    |> Seq.tryHead
+    |> Option.map snd
+    |> Option.defaultValue 0.0
