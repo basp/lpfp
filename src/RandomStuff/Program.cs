@@ -1,149 +1,86 @@
-﻿using Raylib_CSharp.Camera.Cam2D;
+﻿using System.Numerics;
+using System.Runtime.Intrinsics.X86;
+using Raylib_CSharp.Camera.Cam2D;
 
 namespace RandomStuff;
 
-using System.Numerics;
-using DefaultEcs;
-using DefaultEcs.System;
-using DefaultEcs.Threading;
-
-using Raylib_CSharp;
-using Raylib_CSharp.Colors;
-using Raylib_CSharp.Rendering;
-using Raylib_CSharp.Windowing;
-
-internal class Example01()
+class GameOfLife
 {
-    private const int ScreenWidth = 800;
-    private const int ScreenHeight = 450;
+    private readonly int rows;
+    private readonly int columns;
 
-    private struct Position
-    {
-        public Vector2 Value;
-    }
-
-    private struct Velocity
-    {
-        public Vector2 Value;
-    }
-
-    private struct DrawInfo
-    {
-        public float Radius;
-        
-        public Color Color;
-
-        public Vector2 Destination;
-    }
-
-    [With(typeof(Velocity))]
-    private class VelocitySystem(World world, IParallelRunner runner) 
-        : AEntitySetSystem<float>(world, runner)
-    {
-        private const float CollisionDamping = 0.8f;
-        
-        protected override void Update(float deltaTime, in Entity entity)
-        {
-            ref var velocity = ref entity.Get<Velocity>();
-            ref var position = ref entity.Get<Position>();
-
-            velocity.Value.Y += 9f;
-            
-            var offset = velocity.Value * deltaTime;
-
-            position.Value.X += offset.X;
-            position.Value.Y += offset.Y;
-
-            var halfBoundsSize = new Vector2(10f, 10f);
-            //
-            // if (MathF.Abs(position.Value.X) > halfBoundsSize.X)
-            // {
-            //     position.Value.X = halfBoundsSize.X * MathF.Sign(position.Value.X);
-            //     velocity.Value.X *= -1f;
-            // }
-            //
-            if (MathF.Abs(position.Value.Y) > Example01.ScreenHeight / 2f - halfBoundsSize.Y)
-            {
-                position.Value.Y = (Example01.ScreenHeight / 2f - halfBoundsSize.Y) * MathF.Sign(position.Value.Y);
-                velocity.Value.Y *= -1f * VelocitySystem.CollisionDamping;
-            }
-        }
-    }
-
-    private class DrawSystem(World world, IParallelRunner runner)
-        : AComponentSystem<float, Position>(world, runner)
-    {
-        protected override void Update(
-            float elapsedTime, 
-            Span<Position> components)
-        {
-            foreach (var c in components)
-            {
-                var centerX = (int)MathF.Round(c.Value.X);
-                var centerY = (int)MathF.Round(c.Value.Y);
-                Graphics.DrawCircle(centerX, centerY, 10f, Color.SkyBlue);
-            }
-        }
-    }
+    private bool[][] current;
+    private bool[][] next;
     
-    public void Run()
+    record struct Position(int Row, int Column);
+
+    public GameOfLife(int rows, int columns)
     {
-        IParallelRunner runner = new DefaultParallelRunner(Environment.ProcessorCount);
+        this.rows = rows;
+        this.columns = columns;
         
-        var world = new World();
-        var sphere = world.CreateEntity();
-        sphere.Set(new Position
+        this.current = Enumerable
+            .Range(0, rows + 2)
+            .Select(_ => new bool[columns + 2])
+            .ToArray();
+        
+        this.next = Enumerable
+            .Range(0, rows + 2)
+            .Select(_ => new bool[columns + 2])
+            .ToArray();
+    }
+
+    public bool this[int row, int column]
+    {
+        get => this.current[row + 1][column + 1];
+        set => this.current[row + 1][column + 1] = value;
+    }
+
+    public void Update()
+    {
+        for (var j = 1; j <= this.columns; j++)
         {
-            Value = Vector2.Zero,
-        });
-        sphere.Set(new Velocity
-        {
-            Value = new Vector2(0f, 10f),
-        });
+            for (var i = 1; i <= this.columns; i++)
+            {
+                var aliveNeighbors = this.CalculateAliveNeighbors(i, j);
 
-        var system = new SequentialSystem<float>(
-            new VelocitySystem(world, runner),
-            new DrawSystem(world, runner));
-        
-        Window.Init(
-            Example01.ScreenWidth,
-            Example01.ScreenHeight,
-            "Example 1");
-
-        var cameraOffset = new Vector2(
-            Example01.ScreenWidth / 2f,
-            Example01.ScreenHeight / 2f);
-        
-        var camera = new Camera2D(
-            cameraOffset, 
-            Vector2.Zero, 
-            0f, 
-            1f);
-        
-        while (!Window.ShouldClose())
-        {
-            var deltaTime = Time.GetFrameTime();
-
-            // Update
-            
-            // Draw
-            Graphics.BeginDrawing();
-            Graphics.ClearBackground(Color.Black);
-            Graphics.BeginMode2D(camera);
-
-            system.Update(deltaTime);
-            
-            Graphics.EndMode2D();
-            Graphics.EndDrawing();
+                if (this.current[j][i])
+                {
+                    
+                }
+            }
         }
     }
+
+    private int CalculateAliveNeighbors(int i, int j) =>
+        GameOfLife.GetNeighborPositions(i, j)
+            .Select(pos => this.current[pos.Row][pos.Column])
+            .Count(v => v);
+    
+    private static Position[] GetNeighborPositions(int i, int j) =>
+        new[]
+        {
+            new Position(-1, -1),
+            new Position(-1, 0),
+            new Position(-1, 1),
+            new Position(0, 1),
+            new Position(1, 1),
+            new Position(1, 0),
+            new Position(1, -1),
+            new Position(0, -1),
+        }
+        .Select(offset =>
+        {
+            var row = j + offset.Row;
+            var column = i + offset.Column;
+            return new Position(row, column);
+        })
+        .ToArray();
 }
 
 internal static class Program
 {
     public static void Main(string[] args)
     {
-        var example = new Example01();
-        example.Run();
     }
 }

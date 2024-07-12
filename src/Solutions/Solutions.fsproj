@@ -17,6 +17,7 @@
     <None Include="Optics.fsx" />
     <Content Include="README.md" />
     <None Include="RandomProgramming.fsx" />
+    <None Include="GameOfLife.fsx" />
   </ItemGroup>
 
   <ItemGroup>
