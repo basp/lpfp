@@ -62,8 +62,7 @@ let update (current: Generation) : Generation =
                 | true, _ when liveNeighbors < 2 -> false
                 | true, _ when liveNeighbors > 3 -> false
                 | true, 2 -> true
-                | true, 3 -> true
-                | false, 3 -> true
+                | _, 3 -> true
                 | _ -> false
     next
     
@@ -74,21 +73,52 @@ module Program =
             { Row = row + 0; Column = col }
             { Row = row + 1; Column = col }
         ]
+        
+    let toad row col =
+        [
+            { Row = row; Column = col }
+            { Row = row; Column = col + 1 }
+            { Row = row; Column = col + 2 }
+            { Row = row + 1; Column = col - 1 }
+            { Row = row + 1; Column = col }
+            { Row = row + 1; Column = col + 1 }
+        ]
+
+    let glider row col =
+        [
+            { Row = row - 1; Column = col + 1 }
+            { Row = row; Column = col - 1 }
+            { Row = row; Column =  col + 1 }
+            { Row = row + 1; Column = col }
+            { Row = row + 1; Column = col + 1 }            
+        ]
+    
+    let example = 
+        [ glider 3 3
+          glider 5 5
+          glider 3 5
+          glider 8 8
+          glider 10 10
+          glider 7 10
+          glider 10 7
+          glider 5 10
+          glider 3 10 ]
+        |> List.concat
     
     let [<EntryPoint>] main _ =
-        let gridSize = Size (7, 7)
+        let gridSize = Size (32, 32)
         let mutable current =
-            blinker 3 3
+            example
             |> initGeneration gridSize
-        let windowSize = Size (240, 240)
-        Window.Init (240, 240, "Game of Life")
+        let windowSize = Size (440, 440)
+        Window.Init (440, 440, "Game of Life")
         Time.SetTargetFPS 60        
         let mutable frameCounter = 0L        
         while (not <| Window.ShouldClose ()) do
             frameCounter <- frameCounter + 1L
             current <-
-                if frameCounter % 120L = 0 then update current
-                else current            
+                if frameCounter % 5L = 0 then update current
+                else current
             Graphics.BeginDrawing ()
             do
                 Graphics.ClearBackground Color.RayWhite
@@ -101,12 +131,13 @@ module Program =
                 for row in [1..(rows - 2)] do
                     for col in [1..(columns - 2)] do
                         if current[row, col] then
-                            let centerX = dx + col * dx
-                            let centerY = dy + row * dy
-                            Graphics.DrawCircle(
-                                centerX,
-                                centerY,
-                                radius,
+                            let posX = dx + col * dx
+                            let posY = dy + row * dy
+                            Graphics.DrawRectangle(
+                                posX + 1,
+                                posY + 1,
+                                dx - 2,
+                                dy - 2,
                                 Color.SkyBlue)
             Graphics.EndDrawing ()            
         0
