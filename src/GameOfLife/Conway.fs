@@ -1,6 +1,8 @@
 ﻿namespace GameOfLife
 
 module Conway =
+    
+    /// Just to make sure we do not get confused by the row-column indexing.
     [<Struct>]
     type Position = { Row: int; Column: int }
 
@@ -63,7 +65,9 @@ module Conway =
         |> Array.where id
         |> Array.length
 
-    /// Updates a generation to produce a new generation.
+    /// Given a <see cref="Generation"/>, produces a
+    /// new <see cref="Generation"/>. This implements
+    /// the rules of Conway's Game of Life.
     let update (generation: Generation) =
         generation.Array
         |> Array2D.mapi (fun row col _ ->
@@ -85,6 +89,8 @@ module Conway =
             | _ -> false)
         |> Generation
         
+    /// Given dimensions and a list of alive positions this will generate the
+    /// first generation.
     let seed (rows, cols) alive : Generation =
         let arr =
             Array2D.create rows cols false
