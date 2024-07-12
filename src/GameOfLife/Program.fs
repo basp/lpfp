@@ -1,14 +1,16 @@
 ﻿namespace GameOfLife
 
-open Raylib_CSharp
-open Raylib_CSharp.Colors
-open Raylib_CSharp.Rendering
-open Raylib_CSharp.Windowing
+// open Raylib_CSharp
+// open Raylib_CSharp.Colors
+// open Raylib_CSharp.Rendering
+// open Raylib_CSharp.Windowing
     
 open Conway
     
 module Program =
     let [<EntryPoint>] main _ =
+        let p (g:Generation) = printfn $"%A{g.Array}"
+        
         let initial =
             [| { Row = 1; Column = 2 }
                { Row = 2; Column = 2 }
@@ -16,13 +18,16 @@ module Program =
             |]
             
         let mutable current = initial |> seed (5, 5)
-        printfn $"%A{current.Array}"
+        p current
         
         current <- update current
-        printfn $"%A{current.Array}"
+        p current
         
         current <- update current
-        printfn $"%A{current.Array}"
+        p current
+        
+        current <- update current
+        p current
         
         // Window.Init (440, 440, "Conway")
         // Time.SetTargetFPS 60                
