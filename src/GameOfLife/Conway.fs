@@ -6,7 +6,7 @@ module Conway =
     [<Struct>]
     type Position = { Row: int; Column: int }
 
-    /// Wraps a <see cref="Array2D"/> to allow for wrap-around indexing.
+    /// Allows for wrap-around indexing of a 2D array.
     type WrapArray2D<'a>(arr: 'a array2d) =
         let rows = Array2D.length1 arr
         
@@ -65,9 +65,10 @@ module Conway =
         |> Array.where id
         |> Array.length
 
-    /// Given a <see cref="Generation"/>, produces a
-    /// new <see cref="Generation"/>. This implements
-    /// the rules of Conway's Game of Life.
+    /// Given a generation, this produces a new generation following
+    /// the rules of Conway's algorithm.
+    /// 
+    /// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
     let update (generation: Generation) =
         generation.Array
         |> Array2D.mapi (fun row col _ ->
@@ -89,7 +90,7 @@ module Conway =
             | _ -> false)
         |> Generation
         
-    /// Given dimensions and a list of alive positions this will generate the
+    /// Given 2D dimensions and a list of alive positions this will generate the
     /// first generation.
     let seed (rows, cols) alive : Generation =
         let arr =
@@ -98,3 +99,4 @@ module Conway =
         alive
         |> Array.iter (fun pos -> arr[pos] <- true)
         arr
+       
