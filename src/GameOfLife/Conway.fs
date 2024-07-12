@@ -96,10 +96,12 @@ module Conway =
     /// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
     let update (generation: Generation) =
         generation.Array
+        // First we map to the number of live neighbors.
         |> Array2D.mapi (fun row col _ ->
             let pos = { Row = row; Column = col }
             generation
             |> calculateAliveNeighbors pos)
+        // Then we can execute Conway's rules easily.
         |> Array2D.mapi (fun row col aliveNeighbors ->
             let pos = { Row = row; Column = col }
             let areWeAlive = generation[pos]
