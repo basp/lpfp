@@ -1,5 +1,6 @@
 ﻿namespace GameOfLife
 
+open System.Text.RegularExpressions
 open GameOfLife.Conway
 open Raylib_CSharp
 open Raylib_CSharp.Colors
@@ -26,9 +27,9 @@ module Program =
     let [<EntryPoint>] main _ =
         let pos = { Row = 2; Column = 2 }                   
         
-        let (rows, columns) = (25, 25)
+        let rows, columns = (25, 25)
         
-        let gliders =
+        let batch1 =
             [| glider pos
                glider { pos with Row = 3 }
                glider { pos with Column = 6 }
@@ -36,12 +37,23 @@ module Program =
                glider { pos with Row = 5 }
             |]
             |> Array.concat
+            
+        let batch2 =
+            [| glider { pos with Row = 8 }
+               glider { pos with Column = -5 }
+               glider { pos with Row = -7 }
+            |]
+            |> Array.concat
+        
+        let gliders =
+            [batch1; batch2]
+            |> Array.concat
         
         let mutable current =
-            gliders
+            batch2
             |> seed (rows, columns)
             
-        let (windowWidth, windowHeight) = (440, 440)
+        let windowWidth, windowHeight = (440, 440)
         
         Window.Init(windowWidth, windowHeight, "Conway")        
         
@@ -51,19 +63,17 @@ module Program =
         let dy = float32 windowHeight / float32 rows
         
         let mutable frameCounter = 0L
+        let mutable generation = 0
         
         while (not <| Window.ShouldClose ()) do
             frameCounter <- frameCounter + 1L
 
-            // We'll update the cell grid every 30 frames
-            // which should equal about 0.5 seconds given
-            // the target framerate of 60 f/s.
-            if frameCounter % 30L = 0 then
+            if frameCounter % 10L = 0 then
                 current <- update current
+                generation <- generation + 1
             else
                 ()           
             
-            // Draw
             Graphics.BeginDrawing ()
             do
                 Graphics.ClearBackground Color.RayWhite
@@ -80,5 +90,11 @@ module Program =
                                 int (dy - 2f),
                                 Color.SkyBlue)
                 Graphics.DrawFPS(10, 10)
+                Graphics.DrawText(
+                    $"Generation {generation}",
+                    10,
+                    40,
+                    16,
+                    Color.Black);
             Graphics.EndDrawing ()            
         0
