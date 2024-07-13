@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <None Include="Sandbox.fsx" />
-    <None Include="ConwayTest.fsx" />
     <Compile Include="Conway.fs" />
+    <Compile Include="Examples.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -1,59 +1,24 @@
 ﻿namespace GameOfLife
 
-open System.Text.RegularExpressions
-open GameOfLife.Conway
+open Conway
 open Raylib_CSharp
 open Raylib_CSharp.Colors
 open Raylib_CSharp.Rendering
 open Raylib_CSharp.Windowing
     
-module Program =
-    let blinker pos =
-        [|
-           { Row = pos.Row - 1; Column = pos.Column }
-           { Row = pos.Row; Column = pos.Column }
-           { Row = pos.Row + 1; Column = pos.Column }
-        |]
-        
-    let glider pos =
-        [|
-            { Row = pos.Row - 1; Column = pos.Column - 1 }
-            { Row = pos.Row; Column = pos.Column }
-            { Row = pos.Row; Column = pos.Column + 1 }
-            { Row = pos.Row + 1; Column = pos.Column - 1 }
-            { Row = pos.Row + 1; Column = pos.Column }            
-        |]
-    
+module Program =       
     let [<EntryPoint>] main _ =
-        let pos = { Row = 2; Column = 2 }                   
+        let factory : GridFactory<bool> =
+            fun arr -> Grid<bool>(arr)
+
+        let rows, columns = (80, 80)            
+        let windowWidth, windowHeight = (880, 880)               
         
-        let rows, columns = (25, 25)
-        
-        let batch1 =
-            [| glider pos
-               glider { pos with Row = 3 }
-               glider { pos with Column = 6 }
-               glider { pos with Column = 3 }
-               glider { pos with Row = 5 }
-            |]
-            |> Array.concat
-            
-        let batch2 =
-            [| glider { pos with Row = 8 }
-               glider { pos with Column = -5 }
-               glider { pos with Row = -7 }
-            |]
-            |> Array.concat
-        
-        let gliders =
-            [batch1; batch2]
-            |> Array.concat
-        
+        let pos = { Row = 10; Column = 5 }                                          
+        let initial = Examples.gliderGun pos                
         let mutable current =
-            batch2
-            |> seed (rows, columns)
-            
-        let windowWidth, windowHeight = (440, 440)
+            initial
+            |> seed (rows, columns) factory
         
         Window.Init(windowWidth, windowHeight, "Conway")        
         
@@ -64,23 +29,27 @@ module Program =
         
         let mutable frameCounter = 0L
         let mutable generation = 0
+        let mutable alive = Array.length initial
         
         while (not <| Window.ShouldClose ()) do
             frameCounter <- frameCounter + 1L
 
-            if frameCounter % 10L = 0 then
-                current <- update current
+            if (frameCounter % 10L = 0) && (alive > 0) then
+                current <- update factory current
                 generation <- generation + 1
             else
                 ()           
             
             Graphics.BeginDrawing ()
             do
+                alive <- 0
                 Graphics.ClearBackground Color.RayWhite
                 for row in [0..(current.Rows - 1)] do
                     for col in [0..(current.Columns - 1)] do
                         let pos = { Row = row; Column = col }
-                        if current[pos] then
+                        match current[pos] with
+                        | Some a when a ->
+                            alive <- alive + 1
                             let px = int <| round (float32 col * dx)
                             let py = int <| round (float32 row * dy)
                             Graphics.DrawRectangle(
@@ -89,12 +58,13 @@ module Program =
                                 int (dx - 2f),
                                 int (dy - 2f),
                                 Color.SkyBlue)
+                        | _ -> ()
                 Graphics.DrawFPS(10, 10)
                 Graphics.DrawText(
                     $"Generation {generation}",
                     10,
                     40,
-                    16,
+                    24,
                     Color.Black);
             Graphics.EndDrawing ()            
         0
