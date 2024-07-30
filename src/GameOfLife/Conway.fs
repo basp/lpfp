@@ -62,13 +62,10 @@ module Conway =
     
     type GridFactory<'a> = 'a array2d -> IGrid<'a>
     
-    /// This is just an alias for a bool array2d wrapper.
     type Generation = IGrid<bool>
         
     /// Returns a list of neighboring positions based on the given position.
     let neighbors pos =
-        // This list represents the offsets of all eight cells
-        // surrounding the given position.
         let neighborOffsets =
             [| { Row = -1; Column = -1 }
                { Row = -1; Column = 0 }
@@ -79,14 +76,9 @@ module Conway =
                { Row = 1; Column = 0 }
                { Row = 1; Column = 1 }
             |]
-            
-        // Generates a new position based on the given position and offset.
         let offsetPosition offset =
             { Row = offset.Row + pos.Row
               Column = offset.Column + pos.Column }
-            
-        // Generate the neighbor positions based on the offsets and the
-        // mapping function defined above.
         neighborOffsets
         |> Array.map offsetPosition
 
@@ -110,7 +102,7 @@ module Conway =
             let pos = { Row = row; Column = col }
             generation
             |> calculateAliveNeighbors pos)
-        // Then we can execute Conway's rules easily.
+        // Next we can execute Conway's rules easily.
         |> Array2D.mapi (fun row col aliveNeighbors ->
             let pos = { Row = row; Column = col }
             let areWeAlive =
@@ -133,9 +125,9 @@ module Conway =
     /// Given 2D dimensions and a list of alive positions this will generate the
     /// first generation.
     let seed (rows, cols) (factory: GridFactory<bool>) alive : Generation =
-        let arr =
+        let grid =
             Array2D.create rows cols false
             |> factory
-        alive |> Array.iter (fun pos -> arr[pos] <- Some true)
-        arr
+        alive |> Array.iter (fun pos -> grid[pos] <- Some true)
+        grid
        

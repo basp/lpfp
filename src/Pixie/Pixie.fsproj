@@ -12,6 +12,7 @@
     <Compile Include="Core.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
+    <None Include="Noise.fsx" />
   </ItemGroup>
 
   <ItemGroup>

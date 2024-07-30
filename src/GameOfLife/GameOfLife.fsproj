@@ -10,6 +10,13 @@
     <Compile Include="Conway.fs" />
     <Compile Include="Examples.fs" />
     <Compile Include="Program.fs" />
+    <None Include="Particles.fsx" />
+    <None Include="Partikel.fsx" />
+    <None Include="AnimatedLineDrawing.fsx" />
+    <None Include="TurtleRotations.fsx" />
+    <None Include="AnimatedTurtles.fsx" />
+    <None Include="AbstractSyntaxTurtles.fsx" />
+    <None Include="P5.fsx" />
   </ItemGroup>
 
   <ItemGroup>

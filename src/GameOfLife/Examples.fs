@@ -98,3 +98,12 @@ module Examples =
             { Row = pos.Row - 1; Column = pos.Column + 6 }
         |] 
 
+    let acorn pos =
+        [| { Row = pos.Row + 1; Column = pos.Column + 2 }
+           { Row = pos.Row + 2; Column = pos.Column + 4 }
+           { Row = pos.Row + 3; Column = pos.Column + 1 }
+           { Row = pos.Row + 3; Column = pos.Column + 2 }
+           { Row = pos.Row + 3; Column = pos.Column + 5 }
+           { Row = pos.Row + 3; Column = pos.Column + 6 }
+           { Row = pos.Row + 3; Column = pos.Column + 7 }
+        |]
